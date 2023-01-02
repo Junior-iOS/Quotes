@@ -19,9 +19,9 @@ class QuoteViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textColor = .label
-        label.text = "Some Text"
+        label.text = "Loading..."
         return label
     }()
     
@@ -30,8 +30,10 @@ class QuoteViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemBlue
         button.setTitle("Refresh", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         button.layer.cornerRadius = 5
         button.clipsToBounds = true
+        button.addTarget(self, action: #selector(didTapRefreshButton), for: .touchUpInside)
         return button
     }()
     
@@ -39,7 +41,7 @@ class QuoteViewController: UIViewController {
         let stack = UIStackView(arrangedSubviews: [quoteLabel, refreshButton])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        stack.distribution = .fillEqually
+        stack.distribution = .fillProportionally
         stack.spacing = 8
         return stack
     }()
@@ -73,16 +75,17 @@ class QuoteViewController: UIViewController {
     
     private func bind() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
-        
-        output.sink { [weak self] event in
+        output.receive(on: DispatchQueue.main).sink { [weak self] event in
             switch event {
             case .fetchQuoteFail(let error):
                 self?.quoteLabel.text = error.localizedDescription
             case .fetchQuoteSuccess(let quote):
                 self?.quoteLabel.text = "\(quote.content)\n\n- \(quote.author)"
-            case .toggleButton(let isEnabled):
-                self?.refreshButton.isEnabled = isEnabled
             }
         }.store(in: &cancellable)
+    }
+    
+    @objc private func didTapRefreshButton() {
+        input.send(.didTapRefreshButton)
     }
 }
