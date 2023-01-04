@@ -9,10 +9,14 @@ import Foundation
 import UIKit
 import Combine
 
+protocol QuoteViewDelegate: AnyObject {
+    func didTapRefreshButton()
+}
+
 final class QuoteView: UIView {
     
     private let viewModel = QuoteViewModel()
-    private let input: PassthroughSubject<QuoteViewModel.Input, Never> = .init()
+    weak var delegate: QuoteViewDelegate?
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -85,6 +89,6 @@ final class QuoteView: UIView {
     }
     
     @objc private func didTapRefreshButton() {
-        input.send(.didTapRefreshButton)
+        delegate?.didTapRefreshButton()
     }
 }

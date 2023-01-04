@@ -33,6 +33,7 @@ class QuoteViewController: UIViewController {
     
     private func setup() {
         view.backgroundColor = .systemBackground
+        quoteView.delegate = self
         setupView()
         bind()
     }
@@ -60,7 +61,10 @@ class QuoteViewController: UIViewController {
         }.store(in: &cancellable)
     }
     
-    @objc private func didTapRefreshButton() {
+}
+
+extension QuoteViewController: QuoteViewDelegate {
+    func didTapRefreshButton() {
         input.send(.didTapRefreshButton)
     }
 }
