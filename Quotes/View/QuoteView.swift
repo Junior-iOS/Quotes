@@ -52,7 +52,7 @@ final class QuoteView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.distribution = .fillProportionally
-        stack.spacing = 8
+        stack.spacing = 16
         return stack
     }()
     
