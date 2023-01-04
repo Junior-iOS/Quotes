@@ -14,10 +14,7 @@ protocol QuoteServiceType {
 
 final class QuoteService: QuoteServiceType {
     func getRandomQuote<T: Codable>(_ request: QuoteRequest, expecting type: T.Type) -> AnyPublisher<Quote, Error> {
-//        guard let url = URL(string: "https://api.quotable.io/random") else { fatalError("Unsupported") }
         guard let url = request.url else { fatalError("Could not find URL") }
-//        var urlRequest = URLRequest(url: url)
-//        urlRequest.httpMethod = request.httpMethod
         
         return URLSession.shared.dataTaskPublisher(for: url).catch { error in
             return Fail(error: error).eraseToAnyPublisher()
